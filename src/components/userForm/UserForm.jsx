@@ -4,26 +4,76 @@ import {
   Form,
   Input,
   Button,
-  Select,
+  Modal,
 } from 'antd';
 
-const { Option } = Select;
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 class UserForm extends React.Component {
-  constructor() {
-    super();
-    this.state = { 
-      name: null,
-    };
+  constructor(props) {
+    super(props);
+    this.state = {};
+    if (props.id) this.getSelectedUser();
   }
 
-  onFinish = () => {
-    console.log('Received values from form:', this.state);
+  getSelectedUser = () => {
+    fetch(`https://frontendapi.cm2tech.com.br/users/${this.props.id}`, {
+      headers: {
+        Accept: 'application/json',
+        "Content-Type": "application/json",
+        
+      },
+      method: "GET",
+    })
+      .then(response => response.json())
+      .then((data) => {
+        this.setState({ users: data })
+        console.log(this.state.users?.name);
+      });
   };
+
+  onFinish = () => {
+    
+    console.log('Received values from form:', this.state);
+    /*
+    fetch('https://frontendapi.cm2tech.com.br/users', {
+      headers: {
+        Accept: 'application/json',
+        "Content-Type": "application/json",
+        
+      },
+      body: JSON.stringify(this.state),
+      method: "POST",
+    })
+      .then(response => response.json())
+      .then(() => {
+        window.location.href = '../';
+      })
+    */
+    const idGenerated = '12345';
+    this.confirm(idGenerated);
+  };
+
+  confirm(id) {
+    Modal.confirm({
+      title: 'Create Account',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Do you wish to create an account to this user now? (you can do it later)',
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk() {
+        window.location.href = '../user/' + id + '/bank_account';
+      },
+      onCancel() {
+        window.location.href = '../';
+      },
+    });
+  }
 
   onValuesChange = (value) => {
     this.setState({ [Object.keys(value)[0]]: Object.values(value)[0] });
   }
+
   render() {
     return (
       <Form
@@ -44,6 +94,7 @@ class UserForm extends React.Component {
       <Form.Item
         label="Name"
         name="name"
+        value={this.state.users?.name}
         rules={[{ required: true, message: 'Input the name!' }]}
       >
         <Input />
@@ -60,55 +111,7 @@ class UserForm extends React.Component {
         name="email"
         rules={[{ required: true, message: 'Input the E-mail!' }]}
       >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Account Name"
-        name="account_name"
-        rules={[{ required: true, message: 'Input the E-mail!' }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Agency"
-        name="agency"
-        rules={[{ required: true, message: 'Input the agency number!' }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Agency Digit"
-        name="agency_digit"
-        rules={[{ required: true, message: 'Input the agency digit!' }]}
-      >
-        <Input />
-      </Form.Item> 
-      <Form.Item
-        label="Account Number"
-        name="account_number"
-        rules={[{ required: true, message: 'Input the account number!' }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Account Digit"
-        name="account_digit"
-        rules={[{ required: true, message: 'Input the account digit!' }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item 
-        label="Account Type"
-        name="account_type"
-        rules={[{ required: true, message: 'Input the account type!' }]}
-      >
-        <Select
-          placeholder="Select a account type"
-          allowClear
-        >
-          <Option value="CORRENTE">Checking Account </Option>
-          <Option value="POUPANCA">Savings Account</Option>
-        </Select>
+        <Input type="email"/>
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8 }}>
         <Button type="primary" htmlType="submit">

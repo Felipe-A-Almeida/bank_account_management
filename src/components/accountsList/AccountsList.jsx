@@ -1,7 +1,7 @@
 import React from 'react';
 import './accountsList.css';
 import { Table, Button } from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { EyeOutlined, PlusCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import {
   Link
@@ -31,6 +31,14 @@ class AccountsList extends React.Component {
         title: 'E-mail',
         dataIndex: 'email',
       },
+      {
+        title: 'Accounts',
+        dataIndex: 'accounts',
+      },
+      {
+        title: 'Actions',
+        dataIndex: 'actions',
+      }
     ];
     
     const data = [];
@@ -40,6 +48,19 @@ class AccountsList extends React.Component {
         name: this.state.users[i].name,
         cpf: this.state.users[i].cpf,
         email: this.state.users[i].email,
+        accounts: (
+          <Link to={'user/' + this.state.users[i].id + '/bank_account'}>
+            <Button type="primary" shape="round" icon={<EyeOutlined />} size={ 'small' }> View Accounts </Button>
+          </Link>
+        ),
+        actions: (
+          <div>
+            <Link to={'user/' + this.state.users[i].id }>
+              <Button shape="round" icon={<EditOutlined />} size={ 'small' }> Edit </Button>
+            </Link>
+            <Button shape="round" icon={<DeleteOutlined />} size={ 'small' } danger> Delete </Button>
+          </div>
+        )          
       });
     }
 

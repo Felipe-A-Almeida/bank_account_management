@@ -12,7 +12,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 class UserForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { form : {}};
     if (props.id) this.getSelectedUser();
   }
 
@@ -27,31 +27,57 @@ class UserForm extends React.Component {
     })
       .then(response => response.json())
       .then((data) => {
-        this.setState({ users: data })
-        console.log(this.state.users?.name);
+        this.setState(
+          { fields: (Object.entries(data).map((property) => {
+            return {
+              name: property[0], value: property[1]
+            }
+          }))}
+        )
       });
   };
 
   onFinish = () => {
-    
-    console.log('Received values from form:', this.state);
-    /*
-    fetch('https://frontendapi.cm2tech.com.br/users', {
-      headers: {
-        Accept: 'application/json',
-        "Content-Type": "application/json",
+
+
+    if(this.props.id) {
+      if(Object.entries(this.state.form).length > 0) {        
+        console.log('MODIFICADO values from form:', this.state.form);
         
-      },
-      body: JSON.stringify(this.state),
-      method: "POST",
-    })
-      .then(response => response.json())
-      .then(() => {
-        window.location.href = '../';
+        fetch(`https://frontendapi.cm2tech.com.br/users/${this.props.id}`, {
+          headers: {
+            Accept: 'application/json',
+            "Content-Type": "application/json",
+            
+          },
+          body: JSON.stringify(this.state.form),
+          method: "PUT",
+        })
+        .then(response => response.json())
+        .then(() => {
+          window.location.href = '../';
+        })
+        
+      }else {
+        console.log('NÃO MODIFICAOD values from form:', this.state.form);
+      }
+    } else {
+      fetch('https://frontendapi.cm2tech.com.br/users', {
+        headers: {
+          Accept: 'application/json',
+          "Content-Type": "application/json",
+          
+        },
+        body: JSON.stringify(this.state.form),
+        method: "POST",
       })
-    */
-    const idGenerated = '12345';
-    this.confirm(idGenerated);
+        .then(response => response.json())
+        .then((data) => {
+          const idGenerated = data.id;
+          this.confirm(idGenerated);
+        })
+    }
+    
   };
 
   confirm(id) {
@@ -71,7 +97,7 @@ class UserForm extends React.Component {
   }
 
   onValuesChange = (value) => {
-    this.setState({ [Object.keys(value)[0]]: Object.values(value)[0] });
+    this.setState({ form:{ ...this.state.form, [Object.keys(value)]: Object.values(value)[0] }});
   }
 
   render() {
@@ -90,6 +116,7 @@ class UserForm extends React.Component {
         onValuesChange={this.onValuesChange}
         size='default'
         onFinish={this.onFinish}
+        fields={ (this.state.fields) || '' }
     >
       <Form.Item
         label="Name"

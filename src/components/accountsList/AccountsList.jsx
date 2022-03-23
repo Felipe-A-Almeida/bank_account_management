@@ -1,21 +1,21 @@
-import React from 'react';
+import { Component } from 'react';
 import './accountsList.css';
-import { Table, Button } from 'antd';
+import { Table, Button, Modal } from 'antd';
 import { EyeOutlined, PlusCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import {
   Link
 } from "react-router-dom";
 
-class AccountsList extends React.Component {
+class AccountsList extends Component {
 
   constructor() {
     super();
-    this.state = { users: [], dataTable: {} };
+    this.state = { users: [], dataTable: {}, isModalVisible: false };
     this.getUsers();
   }
 
-  renderTable() {
+  renderTable(users) {
     const columns = [
       {
         title: 'Name',
@@ -42,29 +42,56 @@ class AccountsList extends React.Component {
     ];
     
     const data = [];
-    for (let i = 0; i < this.state.users.length; i++) {
+    for (let i = 0; i < users.length; i++) {
       data.push({
         key: i,
-        name: this.state.users[i].name,
-        cpf: this.state.users[i].cpf,
-        email: this.state.users[i].email,
+        name: users[i].name,
+        cpf: users[i].cpf,
+        email: users[i].email,
         accounts: (
-          <Link to={'user/' + this.state.users[i].id + '/bank_account'}>
+          <Link to={'user/' + users[i].id + '/bank_account'}>
             <Button type="primary" shape="round" icon={<EyeOutlined />} size={ 'small' }> View Accounts </Button>
           </Link>
         ),
         actions: (
           <div>
-            <Link to={'user/' + this.state.users[i].id }>
+            <Link to={'user/' + users[i].id }>
               <Button shape="round" icon={<EditOutlined />} size={ 'small' }> Edit </Button>
             </Link>
-            <Button shape="round" icon={<DeleteOutlined />} size={ 'small' } danger> Delete </Button>
+            <Button shape="round" icon={<DeleteOutlined />} size={ 'small' } danger onClick={ () => this.showDeleteModal() }> Delete </Button>
+            <Modal title="Delete User" visible={this.state.isModalVisible} onOk={() => this.delete(users[i].id)} onCancel={() => this.handleCancel()}>
+              <p>Do you wish to delete this user now?</p>
+            </Modal>
           </div>
         )          
       });
     }
 
     return <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
+  }
+
+  showDeleteModal = () => {
+    this.setState({ isModalVisible: true });
+  }
+
+  delete = (id) => {
+    console.log(id);
+    this.setState({ isModalVisible: false });
+    
+    fetch(`https://frontendapi.cm2tech.com.br/users/${id}`, {
+      headers: {
+        Accept: 'application/json',
+        "Content-Type": "application/json",
+      },
+      method: "DELETE",
+    })
+    
+    this.setState({ users: this.state.users.filter(user => user.id !== id)})
+    this.renderTable(this.state.users);
+  }
+
+  handleCancel = () => {
+    this.setState({ isModalVisible: false });
   }
 
   getUsers() {
@@ -95,7 +122,7 @@ class AccountsList extends React.Component {
           </Link>
         </div>
         <div className='default-table'>
-          { this.renderTable() }
+          { this.renderTable(this.state.users) }
         </div>
       </div>
     )

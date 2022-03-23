@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Table, Button } from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { Table, Button, Modal } from 'antd';
+import { PlusCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import {
   Link
@@ -41,6 +41,10 @@ class BankAccountList extends React.Component {
       {
         title: 'Account Type',
         dataIndex: 'accountType',
+      },
+      {
+        title: 'Actions',
+        dataIndex: 'actions',
       }
     ];
     
@@ -54,10 +58,45 @@ class BankAccountList extends React.Component {
         accountNumber: this.state.accounts[i].accountNumber,
         accountDigit: this.state.accounts[i].accountDigit,
         accountType: this.state.accounts[i].accountType,
+        actions: (
+          <div>
+            <Link to={'./' + this.state.accounts[i].id }>
+              <Button shape="round" icon={<EditOutlined />} size={ 'small' }> Edit </Button>
+            </Link>
+            <Button shape="round" icon={<DeleteOutlined />} size={ 'small' } danger onClick={ () => this.showDeleteModal() }> Delete </Button>
+            <Modal title="Delete User" visible={this.state.isModalVisible} onOk={() => this.delete(this.state.accounts[i].id)} onCancel={() => this.handleCancel()}>
+              <p>Do you wish to delete this user now?</p>
+            </Modal>
+          </div>
+        )
       });
     }
 
     return <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
+  }
+
+  showDeleteModal = () => {
+    this.setState({ isModalVisible: true });
+  }
+
+  delete = (id) => {
+    console.log(id);
+    this.setState({ isModalVisible: false });
+    
+    fetch(`https://frontendapi.cm2tech.com.br/bank_accounts/${id}`, {
+      headers: {
+        Accept: 'application/json',
+        "Content-Type": "application/json",
+      },
+      method: "DELETE",
+    })
+    
+    this.setState({ accounts: this.state.accounts.filter(user => user.id !== id)})
+    this.renderTable(this.state.accounts);
+  }
+
+  handleCancel = () => {
+    this.setState({ isModalVisible: false });
   }
 
   getAccounts = () => {

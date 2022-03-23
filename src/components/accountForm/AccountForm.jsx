@@ -13,10 +13,21 @@ class AccountForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: `/users/${this.props.id}`,
       allBanks: [],
+      form: {},
     };
+    this.fields = {
+      accountName: '',
+      agency: '',
+      agencyDigit: '',
+      accountNumber: '',
+      accountDigit: '',
+      accountType: '',
+      bank: '',
+      user: `/users/${this.props.id}`,
+    }
     this.getBanks();
+    if (props.accountId) this.getSelectedAccount();
   }
 
   getBanks = () => {
@@ -35,29 +46,81 @@ class AccountForm extends React.Component {
     
   }
 
-  onFinish = () => {
-    delete this.state.allBanks;
-    console.log('Received values from form:', this.state);
-    
-    
-    fetch('https://frontendapi.cm2tech.com.br/bank_accounts', {
+  getSelectedAccount = () => {
+    fetch(`https://frontendapi.cm2tech.com.br/bank_accounts/${this.props.accountId}`, {
       headers: {
         Accept: 'application/json',
         "Content-Type": "application/json",
         
       },
-      body: JSON.stringify(this.state),
-      method: "POST",
+      method: "GET",
     })
       .then(response => response.json())
       .then((data) => {
-        console.log(data);
-        window.location.href = `../../${this.props.id}/bank_account`;
+        this.setState(
+          { fields: (Object.entries(data).filter((property) => property[0] !== 'id').map((property) => {
+            this.fields[property[0]] = property[1];
+            return {
+              name: property[0], value: property[1]
+            }
+          }))}
+        )
+      });
+  };
+
+  onFinish = () => {
+    if(this.props.accountId) {
+      if(Object.entries(this.state.form).length > 0) {        
+        const object = {
+          ...this.fields,
+          ...this.state.form
+        }
+        console.log(JSON.stringify(object));
+        
+        fetch(`https://frontendapi.cm2tech.com.br/bank_accounts/${this.props.accountId}`, {
+          headers: {
+            Accept: 'application/json',
+            "Content-Type": "application/json",
+            
+          },
+          body: JSON.stringify(object),
+          method: "PUT",
+        })
+        .then(response => response.json())
+        .then(() => {
+          window.location.href = '../bank_accounts';
+        })
+        
+        
+      }else {
+        console.log('NÃO MODIFICAOD values from form:', this.state.form);
+      }
+    } else {
+      const object = {
+        ...this.fields,
+        ...this.state.form
+      }
+      
+      fetch('https://frontendapi.cm2tech.com.br/bank_accounts', {
+        headers: {
+          Accept: 'application/json',
+          "Content-Type": "application/json",
+          
+        },
+        body: JSON.stringify(object),
+        method: "POST",
       })
+        .then(response => response.json())
+        .then((data) => {
+          console.log(data);
+          window.location.href = `../../${this.props.id}/bank_accounts`;
+        })
+      
+    }
   };
 
   onValuesChange = (value) => {
-    this.setState({ [Object.keys(value)[0]]: Object.values(value)[0] });
+    this.setState({ form:{ ...this.state.form, [Object.keys(value)]: Object.values(value)[0] }});
   }
 
   render() {
@@ -76,6 +139,7 @@ class AccountForm extends React.Component {
         onValuesChange={this.onValuesChange}
         size='default'
         onFinish={this.onFinish}
+        fields={ (this.state.fields) || '' }
     >
       <Form.Item
         label="Account Name"

@@ -13,6 +13,12 @@ class UserForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = { form : {}};
+    this.fields = {
+      name: '',
+      cpf: '',
+      email: '',
+      bankAccounts: [],
+    }
     if (props.id) this.getSelectedUser();
   }
 
@@ -28,7 +34,8 @@ class UserForm extends React.Component {
       .then(response => response.json())
       .then((data) => {
         this.setState(
-          { fields: (Object.entries(data).map((property) => {
+          { fields: (Object.entries(data).filter((property) => property[0] !== 'id').map((property) => {
+            this.fields[property[0]] = property[1];
             return {
               name: property[0], value: property[1]
             }
@@ -38,24 +45,24 @@ class UserForm extends React.Component {
   };
 
   onFinish = () => {
-
-
     if(this.props.id) {
       if(Object.entries(this.state.form).length > 0) {        
-        console.log('MODIFICADO values from form:', this.state.form);
-        
+        const object = {
+          ...this.fields,
+          ...this.state.form
+        }
         fetch(`https://frontendapi.cm2tech.com.br/users/${this.props.id}`, {
           headers: {
             Accept: 'application/json',
             "Content-Type": "application/json",
             
           },
-          body: JSON.stringify(this.state.form),
+          body: JSON.stringify(object),
           method: "PUT",
         })
         .then(response => response.json())
         .then(() => {
-          window.location.href = '../';
+        window.location.href = '../';
         })
         
       }else {
@@ -88,7 +95,7 @@ class UserForm extends React.Component {
       okText: 'Yes',
       cancelText: 'No',
       onOk() {
-        window.location.href = '../user/' + id + '/bank_account';
+        window.location.href = '../user/' + id + '/bank_accounts';
       },
       onCancel() {
         window.location.href = '../';
@@ -110,9 +117,6 @@ class UserForm extends React.Component {
           span: 12,
         }}
         layout="horizontal"
-        initialValues={{
-          size: 'default',
-        }}
         onValuesChange={this.onValuesChange}
         size='default'
         onFinish={this.onFinish}

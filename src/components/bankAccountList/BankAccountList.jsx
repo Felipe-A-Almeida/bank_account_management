@@ -89,12 +89,12 @@ class BankAccountList extends React.Component {
               Delete 
             </Button>
             <Modal 
-              title="Delete User"
+              title="Delete Account"
               visible={this.state.isModalVisible}
               onCancel={() => this.handleCancel()}
               onOk={() => this.delete(this.state.accounts[i].id)}
             >
-              <p>Do you wish to delete this user now?</p>
+              <p>Do you wish to delete this account now?</p>
             </Modal>
           </div>
         )

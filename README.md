@@ -6,6 +6,7 @@ This project was developed using React.
 The interface was build using Ant Design UI design language.
 
 #deployment
-To deploy the project, clone it into a repository of your choice. Then, run npm install. After that, run npm run dev to execute it.
+
+To deploy the project, clone it into a repository of your choice. Then, run npm install. After that, run start to execute it.
 
 Thank you!

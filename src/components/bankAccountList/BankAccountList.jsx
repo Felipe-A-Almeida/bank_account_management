@@ -1,7 +1,15 @@
 import React from 'react';
 
-import { Table, Button, Modal } from 'antd';
-import { PlusCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { 
+  Table,
+  Button,
+  Modal
+} from 'antd';
+import { 
+  PlusCircleOutlined,
+  EditOutlined,
+  DeleteOutlined 
+} from '@ant-design/icons';
 
 import {
   Link
@@ -61,10 +69,31 @@ class BankAccountList extends React.Component {
         actions: (
           <div>
             <Link to={'./' + this.state.accounts[i].id }>
-              <Button shape="round" icon={<EditOutlined />} size={ 'small' }> Edit </Button>
+              <Button 
+                shape="round"
+                size={ 'small' }
+                className="list-button list-button-m margin-sides-sm"
+                icon={<EditOutlined />}
+              >
+                Edit
+              </Button>
             </Link>
-            <Button shape="round" icon={<DeleteOutlined />} size={ 'small' } danger onClick={ () => this.showDeleteModal() }> Delete </Button>
-            <Modal title="Delete User" visible={this.state.isModalVisible} onOk={() => this.delete(this.state.accounts[i].id)} onCancel={() => this.handleCancel()}>
+            <Button
+              danger
+              shape="round"
+              size={ 'small' }
+              className="list-button list-button-m margin-sides-sm"
+              icon={<DeleteOutlined />}
+              onClick={ () => this.showDeleteModal() }
+            >
+              Delete 
+            </Button>
+            <Modal 
+              title="Delete User"
+              visible={this.state.isModalVisible}
+              onCancel={() => this.handleCancel()}
+              onOk={() => this.delete(this.state.accounts[i].id)}
+            >
               <p>Do you wish to delete this user now?</p>
             </Modal>
           </div>
@@ -72,7 +101,11 @@ class BankAccountList extends React.Component {
       });
     }
 
-    return <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
+    return <Table 
+            dataSource={data}
+            columns={columns}
+            pagination={{ pageSize: 5 }} 
+          />
   }
 
   showDeleteModal = () => {
@@ -80,7 +113,6 @@ class BankAccountList extends React.Component {
   }
 
   delete = (id) => {
-    console.log(id);
     this.setState({ isModalVisible: false });
     
     fetch(`https://frontendapi.cm2tech.com.br/bank_accounts/${id}`, {
@@ -91,7 +123,9 @@ class BankAccountList extends React.Component {
       method: "DELETE",
     })
     
-    this.setState({ accounts: this.state.accounts.filter(user => user.id !== id)})
+    this.setState({
+      accounts: this.state.accounts.filter(user => user.id !== id)
+    })
     this.renderTable(this.state.accounts);
   }
 
@@ -118,10 +152,18 @@ class BankAccountList extends React.Component {
   render() {
     return (
       <div>
-        <div className="display-flex space-between container-header">
+        <div 
+          className="display-flex space-between container-header"
+        >
           <h1>Bank Accounts</h1>
           <Link to="new">
-            <Button type="primary" shape="round" icon={<PlusCircleOutlined />} size={ 'large' }>
+            <Button 
+              shape="round"
+              type="primary"
+              size={ 'large' }
+              className="list-button"
+              icon={<PlusCircleOutlined />}
+            >
               Create account
             </Button>
           </Link>

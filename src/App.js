@@ -1,11 +1,10 @@
-import logo from './logo.svg';
 import './App.css';
 
 import { Layout } from 'antd';
 
 
 import Menu from './components/menu/Menu.jsx';
-import AccountsList from './components/accountsList/AccountsList.jsx';
+import UserList from './components/userList/UserList.jsx';
 
 const { Content, Footer } = Layout;
 
@@ -16,10 +15,10 @@ function App() {
         <Menu />
         <Content style={{ padding: '0 50px' }}>
           <div className="site-layout-content container">
-            <AccountsList />
+            <UserList />
           </div>
         </Content>
-        <Footer className="text-align-center">FelBank ©2022 Created by Felipe A. de Almeida</Footer>
+        <Footer className="text-align-center">FEHBANK ©2022 Created by Felipe A. de Almeida</Footer>
       </Layout>
     </div>
   );

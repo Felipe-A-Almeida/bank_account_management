@@ -5,6 +5,7 @@ import {
   Input,
   Button,
   Modal,
+  notification,
 } from 'antd';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -34,12 +35,14 @@ class UserForm extends React.Component {
       .then(response => response.json())
       .then((data) => {
         this.setState(
-          { fields: (Object.entries(data).filter((property) => property[0] !== 'id').map((property) => {
-            this.fields[property[0]] = property[1];
-            return {
-              name: property[0], value: property[1]
-            }
-          }))}
+          { fields: (
+            Object.entries(data).filter((property) => property[0] !== 'id').map((property) => {
+              this.fields[property[0]] = property[1];
+              return {
+                name: property[0], value: property[1]
+              }
+            })
+          )}
         )
       });
   };
@@ -62,11 +65,20 @@ class UserForm extends React.Component {
         })
         .then(response => response.json())
         .then(() => {
-        window.location.href = '../';
+          this.openSuccessNotification(
+            'SUCCESS!',
+            'User updated',
+          )
+          setTimeout(() => {
+            window.location.href = '../';
+          }, 600);          
         })
         
-      }else {
-        console.log('NÃO MODIFICAOD values from form:', this.state.form);
+      } else {
+        this.openErrorNotification(
+          'WARNING!',
+          'No modifications were detected. Please change one or more fields to submit the form',
+        )
       }
     } else {
       fetch('https://frontendapi.cm2tech.com.br/users', {
@@ -78,11 +90,11 @@ class UserForm extends React.Component {
         body: JSON.stringify(this.state.form),
         method: "POST",
       })
-        .then(response => response.json())
-        .then((data) => {
-          const idGenerated = data.id;
-          this.confirm(idGenerated);
-        })
+      .then(response => response.json())
+      .then((data) => {
+        const idGenerated = data.id;
+        this.confirm(idGenerated);
+      })
     }
     
   };
@@ -107,49 +119,69 @@ class UserForm extends React.Component {
     this.setState({ form:{ ...this.state.form, [Object.keys(value)]: Object.values(value)[0] }});
   }
 
+  openErrorNotification = (title, description) => {
+    notification.error({
+      message: `${title}`,
+      description: description,
+    });
+  };
+
+  openSuccessNotification = (title, description) => {
+    notification.success({
+      message: `${title}`,
+      description: description,
+    });
+  }
+
   render() {
     return (
-      <Form
-        labelCol={{
-          span: 4,
-        }}
-        wrapperCol={{
-          span: 12,
-        }}
-        layout="horizontal"
-        onValuesChange={this.onValuesChange}
-        size='default'
-        onFinish={this.onFinish}
-        fields={ (this.state.fields) || '' }
-    >
-      <Form.Item
-        label="Name"
-        name="name"
-        value={this.state.users?.name}
-        rules={[{ required: true, message: 'Input the name!' }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="CPF"
-        name="cpf"
-        rules={[{ required: true, message: 'Input the CPF!' }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="E-mail"
-        name="email"
-        rules={[{ required: true, message: 'Input the E-mail!' }]}
-      >
-        <Input type="email"/>
-      </Form.Item>
-      <Form.Item wrapperCol={{ offset: 8 }}>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+      <div>
+        <h1 className='text-align-center margin-bottom-m'>
+          Create Account
+        </h1>
+        <Form
+          labelCol={{
+            span: 4,
+          }}
+          size='large'
+          className="centered-form"
+          onValuesChange={this.onValuesChange}
+          onFinish={this.onFinish}
+          fields={ (this.state.fields) || '' }
+        >
+          <Form.Item
+            label="Name"
+            name="name"
+            value={this.state.users?.name}
+            rules={[{ required: true, message: 'Input the name!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="CPF"
+            name="cpf"
+            rules={[{ required: true, message: 'Input the CPF!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="E-mail"
+            name="email"
+            rules={[{ required: true, message: 'Input the E-mail!' }]}
+          >
+            <Input type="email"/>
+          </Form.Item>
+          <Form.Item className='text-align-center'>
+            <Button 
+              type="primary"
+              htmlType="submit"
+              className='submit-button'
+            >
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     )
   }
 }

@@ -9,8 +9,8 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import CreateUser from './routes/User/New';
-import EditUser from './routes/User/Edit';
+import CreateUser from './routes/User/NewUser';
+import EditUser from './routes/User/EditUser';
 import BankAccounts from './routes/User/BankAccounts';
 import CreateAccount from './routes/User/CreateAccount';
 import EditAccount from './routes/User/EditAccount';
@@ -31,7 +31,4 @@ render(
   document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

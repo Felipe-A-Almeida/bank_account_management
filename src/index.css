@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 code {
@@ -55,4 +56,41 @@ code {
 
 .container {
   margin: 50px 80px;
+}
+
+.justify-content-end {
+  justify-content: right;
+}
+
+.menu-item {
+  margin: 0 5px;
+}
+
+.list-button {
+  font-weight: 700 !important;
+}
+
+.list-button-g {
+  height: 40px !important;
+}
+
+.list-button-m {
+  height: 35px !important;
+}
+.margin-sides-sm {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.margin-bottom-m {
+  margin-bottom: 30px;
+}
+.centered-form {
+  width: 80%;
+  margin: 0 auto !important;
+}
+
+.submit-button {
+  width: 250px;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
 }

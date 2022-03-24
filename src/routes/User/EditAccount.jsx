@@ -5,7 +5,7 @@ import { Layout } from 'antd';
 import { useParams } from "react-router-dom";
 
 import Menu from '../../components/menu/Menu.jsx';
-import AccountForm from '../../components/accountForm/AccountForm';
+import BankAccountForm from '../../components/bankAccountForm/BankAccountForm';
 
 const { Content, Footer } = Layout;
 
@@ -17,7 +17,7 @@ function NewUser() {
         <Menu />
         <Content style={{ padding: '0 50px' }}>
           <div className="site-layout-content container">
-            <AccountForm id={id} accountId={accountId} />
+            <BankAccountForm id={id} accountId={accountId} />
           </div>
         </Content>
         <Footer className="text-align-center">FelBank ©2022 Created by Felipe A. de Almeida</Footer>
